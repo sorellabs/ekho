@@ -194,7 +194,6 @@ describe('{} Eventful', function() {
       ensure(f).property('callCount', 3)
     })
     it('Should remove all handlers that yield DROP.', function() {
-debugger
       var ev = _.Eventful.make()
       var f = sinon.stub()
       var g = sinon.stub().returns(_.DROP)
@@ -227,7 +226,6 @@ debugger
       ensure(y).property('callCount', 1)
     })
     it('Should bubble if it\'s not handled.', function() {
-debugger
       var top = _.Eventful.make()
       var ev = _.Eventful.make(top)
       var x = sinon.stub()
