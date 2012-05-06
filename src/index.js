@@ -31,6 +31,7 @@ var Base = require('boo').Base
 //// == Aliasing =======================================================
 var keys     = Object.keys
 var class_of = {}.toString
+var slice    = [].slice
 
 
 
@@ -121,7 +122,7 @@ function make_handler(fun, filter) {
 // make-event :: a:Event -> a
 // make-event :: String, Eventful -> Event
 function make_event(event, target) {
-  return string_p(event)?  Event.make(target, event)
+  return string_p(event)?  Event.make(event, target)
   :      /* otherwise */   event }
 
 
@@ -346,6 +347,7 @@ var Eventful = Base.derive({
 , remove:
   function _remove(event, handler) {
     var self = this
+    if (!string_p(event))  handler = event, event = null
 
       event?           this.listeners[event] = all_but(handler)
     : /* otherwise */  each(this.listeners, clean)
@@ -371,17 +373,17 @@ var Eventful = Base.derive({
 , trigger:
   function _trigger(event) {
     event        = make_event(event, this)
-    arguments[0] = event
+    var args = [event].concat(slice.call(arguments, 1))
 
     this.listeners[event.type] = filter(listeners(this, event.type))
-    if (!event.handled) event.bubble(arguments)
+    if (!event.handled) event.bubble(args)
     return this
 
     function keep_p(value) { return value !== DROP }
     function filter(hooks) {
       var result = []
       hooks.every(function(handler) {
-        if (keep_p(handler.exec.apply(handler, arguments)))
+        if (keep_p(handler.exec.apply(handler, args)))
           result.push(handler)
         return !event.halted })
 
