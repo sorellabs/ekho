@@ -246,8 +246,8 @@ var Handler = Base.derive({
     var filter = this.filter
 
     return !filter?               true
-    :      callable_p(filter)?    filter(origin)
-    :      searchable_p(filter)?  !~filter.indexOf(origin)
+    :      callable_p(filter)?    !!filter(origin)
+    :      searchable_p(filter)?  !!~filter.indexOf(origin)
     :      /* otherwise */        filter === origin }
 
 
