@@ -8,7 +8,9 @@
                   , "url"  : "git://github.com/killdream/ekho" }
 
 , "engines"              : {}
-, "dependencies"         : {}
-, "devDependencies"      : {}
+, "dependencies"         : { "boo": "~1.2.0" }
+, "devDependencies"      : { "mocha": "*"
+                           , "noire": "~0.1.0"
+                           , "sinon": "~1.3.4" }
 , "optionalDependencies" : {}
 }
