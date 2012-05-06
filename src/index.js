@@ -204,7 +204,7 @@ var Event = Base.derive({
   // handlers defined in the parent object of the current context, if
   // any.
   //
-  // bubble! :: @this:Eventful* -> this
+  // bubble! :: @this:Eventful*, [Any] -> this
 , bubble:
   function _bubble(args) {
     if (this.current) {
