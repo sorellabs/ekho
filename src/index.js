@@ -209,7 +209,8 @@ var Event = Base.derive({
   function _bubble(args) {
     if (this.current) {
       this.current = this.current.parent
-      this.current.trigger.apply(this.current, args) }
+      if (this.current)
+        this.current.trigger.apply(this.current, args) }
     return this }
 })
 
