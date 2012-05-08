@@ -17,24 +17,24 @@ describe('{} Event', function() {
   describe('λ halt', function() {
     it('Should halt the event.', function() {
       var ev = _.Event.make()
-      ensure(ev).property('halted', false)
+      ensure(ev).property('halted').same(false)
       ev.halt()
-      ensure(ev).property('halted', true)
+      ensure(ev).property('halted').same(true)
     })
     it('Should handle the event.', function() {
       var ev = _.Event.make()
-      ensure(ev).property('handled', false)
+      ensure(ev).property('handled').same(false)
       ev.halt()
-      ensure(ev).property('handled', true)
+      ensure(ev).property('handled').same(true)
     })
   })
 
   describe('λ handle', function() {
     it('Should handle the event.', function() {
       var ev = _.Event.make()
-      ensure(ev).property('handled', false)
+      ensure(ev).property('handled').same(false)
       ev.handle()
-      ensure(ev).property('handled', true)
+      ensure(ev).property('handled').same(true)
     })
   })
 
@@ -119,7 +119,7 @@ describe('{} Eventful', function() {
       var ev = _.Eventful.make()
       var hd = ev.on('data', f)
       ensure(ev.listeners.data).contains(hd)
-      ensure(ev.listeners.data[0]).property('fun', f)
+      ensure(ev.listeners.data[0]).property('fun').same(f)
     })
   })
 
@@ -169,7 +169,7 @@ describe('{} Eventful', function() {
                                                      ensure(e.current).same(ev) }))
       ev.trigger('data', 1, 2)
 
-      ensure(x).property('callCount', 1)
+      ensure(x).property('callCount').same(1)
     })
     it('Given an Event object, should reissue the event.', function() {
       var ev = _.Eventful.make(), x
@@ -181,7 +181,7 @@ describe('{} Eventful', function() {
                                                       ensure(e2.current).same(ev) }))
       ev.trigger(e, 1, 2)
 
-      ensure(x).property('callCount', 1)
+      ensure(x).property('callCount').same(1)
     })
     it('Should call all event handlers associated for the given event type with the provided arguments.', function() {
       var ev = _.Eventful.make()
@@ -191,7 +191,7 @@ describe('{} Eventful', function() {
       ev.on('data', f)
       ev.trigger('data')
 
-      ensure(f).property('callCount', 3)
+      ensure(f).property('callCount').same(3)
     })
     it('Should remove all handlers that yield DROP.', function() {
       var ev = _.Eventful.make()
@@ -212,8 +212,8 @@ describe('{} Eventful', function() {
       ev.on('data', x = sinon.stub())
       ev.trigger('data')
 
-      ensure(x).property('callCount', 0)
-      ensure(y).property('callCount', 1)
+      ensure(x).property('callCount').same(0)
+      ensure(y).property('callCount').same(1)
     })
     it('Shouldn\'t bubble if it\'s handled.', function() {
       var top = _.Eventful.make()
@@ -222,8 +222,8 @@ describe('{} Eventful', function() {
       ev.on('data', y = sinon.spy(function(ev){ ev.handle() }))
       ev.trigger('data')
 
-      ensure(x).property('callCount', 0)
-      ensure(y).property('callCount', 1)
+      ensure(x).property('callCount').same(0)
+      ensure(y).property('callCount').same(1)
     })
     it('Should bubble if it\'s not handled.', function() {
       var top = _.Eventful.make()
@@ -233,7 +233,7 @@ describe('{} Eventful', function() {
       ev.on('data', x)
       ev.trigger('data')
 
-      ensure(x).property('callCount', 2)
+      ensure(x).property('callCount').same(2)
     })
   })
 })
