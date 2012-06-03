@@ -106,11 +106,21 @@ function searchable_p(subject) {
   &&     typeof subject.indexOf == 'function' }
 
 
+///// Function muted_p
+// Tests if the eventful object is muted.
+//
+// muted? :: Any -> Bool
+function muted_p(subject) {
+  return subject.muteness
+  &&     subject.muteness.length }
+
+
 ///// Function remove
 // Removes an item from a list.
 //
 // remove :: list:[a]*, a -> list
 function remove(xs, x) {
+  xs = xs || []
   var pos = xs.indexOf(x)
   if (pos != -1)  xs.splice(pos, 1)
   return xs }
@@ -323,7 +333,6 @@ var Eventful = Base.derive({
   function _init(parent) {
     this.listeners = {}
     this.parent    = parent
-    this.muteness  = []
     return this }
 
 
@@ -397,7 +406,7 @@ var Eventful = Base.derive({
   // trigger :: @this:Eventful, Event, Any... -> this
 , trigger:
   function _trigger(event) {
-    if (this.muteness.length)  return this
+    if (muted_p(this))  return this
 
     event        = make_event(event, this)
     var args = [event].concat(slice.call(arguments, 1))
@@ -424,6 +433,7 @@ var Eventful = Base.derive({
 , mute:
   function _mute() {
     var id = {}
+    if (!this.muteness)  this.muteness = []
     this.muteness.push(id)
     return id }
 
