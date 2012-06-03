@@ -287,6 +287,7 @@ var Handler = Base.derive({
 //
 // Eventful :: { "listeners" -> { String -> [Handler] }
 //             , "parent"    -> Eventful
+//             , "muted"     -> Bool
 //             }
 var Eventful = Base.derive({
   listeners: {}
@@ -299,6 +300,7 @@ var Eventful = Base.derive({
   function _init(parent) {
     this.listeners = {}
     this.parent    = parent
+    this.muted     = false
     return this }
 
 
@@ -372,6 +374,8 @@ var Eventful = Base.derive({
   // trigger :: @this:Eventful, Event, Any... -> this
 , trigger:
   function _trigger(event) {
+    if (this.muted)  return this
+
     event        = make_event(event, this)
     var args = [event].concat(slice.call(arguments, 1))
 
@@ -388,6 +392,26 @@ var Eventful = Base.derive({
         return !event.halted })
 
       return result }}
+
+
+  ///// Function mute
+  // Temporarily disables all event notifications for this object.
+  //
+  // mute :: @this:Eventful* -> this
+, mute:
+  function _mute() {
+    this.muted = true
+    return this }
+
+
+  ///// Function unmute
+  // Re-enables all event notifications for this object.
+  //
+  // unmute :: @this:Eventful* -> this
+, unmute:
+  function _unmute() {
+    this.muted = false
+    return this }
 })
 
 
