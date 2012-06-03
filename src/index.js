@@ -106,6 +106,16 @@ function searchable_p(subject) {
   &&     typeof subject.indexOf == 'function' }
 
 
+///// Function remove
+// Removes an item from a list.
+//
+// remove :: list:[a]*, a -> list
+function remove(xs, x) {
+  var pos = xs.indexOf(x)
+  if (pos != -1)  xs.splice(pos, 1)
+  return xs }
+
+
 ///// Function make_handler
 // Constructs or initialises a Handler.
 //
@@ -148,6 +158,19 @@ function listeners(eventful, type) {
 
 
 //// == Core Implementation ============================================
+
+//// Function with_silence
+// Runs a block of code within an silenced environment. That is, the
+// `subject' will never send event notifications within this
+// environment.
+//
+// with-silence! :: subject:Eventful*, Fun -> subject
+function with_silence(subject, code) {
+  var id = subject.mute()
+  code.call(subject)
+  subject.unmute(id)
+  return subject }
+
 
 //// Object Event
 // Stores information about the event that was generated in the system,
@@ -287,7 +310,7 @@ var Handler = Base.derive({
 //
 // Eventful :: { "listeners" -> { String -> [Handler] }
 //             , "parent"    -> Eventful
-//             , "muted"     -> Bool
+//             , "muteness"  -> [MutenessID]
 //             }
 var Eventful = Base.derive({
   listeners: {}
@@ -300,7 +323,7 @@ var Eventful = Base.derive({
   function _init(parent) {
     this.listeners = {}
     this.parent    = parent
-    this.muted     = false
+    this.muteness  = []
     return this }
 
 
@@ -374,7 +397,7 @@ var Eventful = Base.derive({
   // trigger :: @this:Eventful, Event, Any... -> this
 , trigger:
   function _trigger(event) {
-    if (this.muted)  return this
+    if (this.muteness.length)  return this
 
     event        = make_event(event, this)
     var args = [event].concat(slice.call(arguments, 1))
@@ -397,29 +420,31 @@ var Eventful = Base.derive({
   ///// Function mute
   // Temporarily disables all event notifications for this object.
   //
-  // mute :: @this:Eventful* -> this
+  // mute :: @this:Eventful* -> MutenessID
 , mute:
   function _mute() {
-    this.muted = true
-    return this }
+    var id = {}
+    this.muteness.push(id)
+    return id }
 
 
   ///// Function unmute
   // Re-enables all event notifications for this object.
   //
-  // unmute :: @this:Eventful* -> this
+  // unmute :: @this:Eventful*, MutenessID -> this
 , unmute:
-  function _unmute() {
-    this.muted = false
+  function _unmute(id) {
+    remove(this.muteness, id)
     return this }
 })
 
 
 //// == Exports ========================================================
-module.exports = { DROP     : DROP
-                 , Event    : Event
-                 , Handler  : Handler
-                 , Eventful : Eventful
+module.exports = { DROP         : DROP
+                 , with_silence : with_silence
+                 , Event        : Event
+                 , Handler      : Handler
+                 , Eventful     : Eventful
 
                  , internal : { make_handler : make_handler
                               , make_event   : make_event

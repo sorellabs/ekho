@@ -235,5 +235,83 @@ describe('{} Eventful', function() {
 
       ensure(x).property('callCount').same(2)
     })
+    it('Should not trigger any notification if there\'s a muteness.', function() {
+      var x = _.Eventful.make()
+      var stub = sinon.stub()
+      x.on('data', stub)
+      x.mute()
+      x.trigger('data')
+
+      ensure(stub).property('callCount').same(0)
+    })
+  })
+
+  describe('λ mute', function() {
+    it('Should prevent notifications from being fired at all.', function() {
+      var x = _.Eventful.make()
+      var stub = sinon.stub()
+      x.on('data', stub)
+      x.mute()
+      x.trigger('data')
+
+      ensure(stub).property('callCount').same(0)
+    })
+
+    it('Should return an unique muteness ID.', function() {
+      var x = _.Eventful.make()
+      ensure(x.mute()).not().same(x.mute())
+    })
+  })
+
+  describe('λ unmute', function() {
+    it('Should remove the given muteness, if it exists.', function() {
+      var x = _.Eventful.make()
+      var stub = sinon.stub()
+      x.on('data', stub)
+      var id = x.mute()
+      x.trigger('data', 1)
+      x.unmute(id)
+      x.trigger('data', 2)
+
+      ensure(stub).property('callCount').same(1)
+      ensure(stub.args[0].slice(1)).equals([2])
+    })
+
+    it('Should do nothing if the object has no such muteness.', function() {
+      var x = _.Eventful.make()
+      var stub = sinon.stub()
+      x.on('data', stub)
+      x.mute()
+      x.trigger('data', 1)
+      x.unmute({})
+      x.trigger('data', 2)
+
+      ensure(stub).property('callCount').same(0)
+    })
+  })
+})
+
+describe('λ with-silence', function() {
+  it('Should mutate the eventful inside the callback.', function() {
+    var x = _.Eventful.make()
+    var stub = sinon.stub()
+    x.on('data', stub)
+    _.with_silence(x, function() {
+      x.trigger('data')
+    })
+
+    ensure(stub).property('callCount').same(0)
+  })
+  it('Should remove the muteness after the callback is executed.', function() {
+    var x = _.Eventful.make()
+    var stub = sinon.stub()
+    x.on('data', stub)
+    _.with_silence(x, function() {
+      x.trigger('data', 1)
+    })
+    x.trigger('data', 2)
+
+    ensure(stub).property('callCount').same(1)
+    ensure(stub.args[0].slice(1)).equals([2])
   })
 })
