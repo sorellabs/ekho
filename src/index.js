@@ -275,7 +275,7 @@ var Handler = Base.derive({
   // the handler's `filter' and the object originating the event.
   //
   // can-exec? :: @this:Handler, Eventful -> Bool
-, can_exec_p:
+, canExecP:
   function _can_exec_p(origin) {
     var filter = this.filter
 
@@ -294,10 +294,10 @@ var Handler = Base.derive({
   function _exec(event) {
     var origin = event.target
 
-    return this.can_exec_p(origin)?  this.fun.apply(origin, arguments)
-    :      /* otherwise */           null }
+    return this.canExecP(origin)?  this.fun.apply(origin, arguments)
+    :      /* otherwise */         null }
 })
-
+Handler.can_exec_p = Handler.canExecP
 
 
 //// Object Eventful
@@ -452,6 +452,7 @@ var Eventful = Base.derive({
 //// == Exports ========================================================
 module.exports = { DROP         : DROP
                  , with_silence : with_silence
+                 , withSilence  : with_silence
                  , Event        : Event
                  , Handler      : Handler
                  , Eventful     : Eventful
