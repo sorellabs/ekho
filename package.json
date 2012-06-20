@@ -1,7 +1,7 @@
 { "author"      : "Quildreen Motta <quildreen@gmail.com> (http://killdream.github.com/)"
 , "name"        : "ekho"
 , "description" : "DOM-agnostic event library + bubbling!"
-, "version"     : "0.2.1"
+, "version"     : "0.3.0"
 , "main"        : "./src/index.js"
 
 , "repository"  : { "type" : "git"
